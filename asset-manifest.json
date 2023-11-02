@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/videoplayer-example/static/js/main.efb52e46.js",
+    "index.html": "/videoplayer-example/index.html",
+    "main.efb52e46.js.map": "/videoplayer-example/static/js/main.efb52e46.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.efb52e46.js"
+  ]
+}
