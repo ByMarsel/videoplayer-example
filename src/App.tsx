@@ -4,7 +4,7 @@ import { Player } from "./components/player/Player";
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: "Pixelify Sans";
-    src: url("/static/PixelifySans-Regular.ttf");
+    src: url("/videoplayer-example/static/PixelifySans-Regular.ttf");
     font-weight: 400;
   }
 
