@@ -1,16 +1,28 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { StyledPlayer } from "./Player.styles";
+import {
+  PlayPauseButton,
+  Progress,
+  ProgressAndTimerContainer,
+  ProgressWrapper,
+  StyledContainer,
+  StyledControls,
+  StyledPlayer,
+  Time,
+} from "./Player.styles";
 import { VideoController } from "../../controller/video-controller";
+import { formatCurrentVideoTime } from "../../controller/utils";
 
 export const Player = () => {
   const [element, setElement] = useState<HTMLVideoElement | null>(null);
   const [controller, setController] = useState<VideoController | null>(null);
   const [, updateState] = useState<number>(0);
-  const progressRef = useRef<HTMLDivElement>(null)
+
+  const progressRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<HTMLDivElement>(null);
+  const playingState = controller?.getPlayingState() || "paused";
 
   const forceUpdate = useCallback(() => {
-    updateState((prevState) => prevState+1);
+    updateState((prevState) => prevState + 1);
   }, []);
 
   useEffect(() => {
@@ -19,60 +31,87 @@ export const Player = () => {
     }
   }, [element, forceUpdate]);
 
-  const handlePlay = useCallback(() => {
-    controller?.play();
+  const updateCurrentVideoTime = useCallback(() => {
+    const timeEl = timerRef.current;
 
+    if (timeEl?.textContent) {
+      timeEl.textContent = formatCurrentVideoTime(
+        controller?.getPlayingProgress() || 0
+      );
+    }
+  }, [controller]);
+
+  const updateProgressBar = useCallback(() => {
+    const progressEl = progressRef.current;
+
+    if (progressEl) {
+      const videoProgress = controller?.getPlayingProgress() || 0;
+      const duration = controller?.getDuration();
+
+      if (duration) {
+        progressEl.style.width = `${(100 / duration) * videoProgress}%`;
+      }
+    }
+  }, [controller]);
+
+  const progressUpdateTask = useCallback(() => {
     const task = () => {
-      if (progressRef.current?.textContent) {
-        (progressRef.current.textContent as any) = controller?.getPlayingProgress();
-      }
-      if (timerRef.current?.textContent) {
-        (timerRef.current.textContent as any) = (controller?.getPlayingProgress() || 1) / 60;
-      }
+      updateProgressBar();
+      updateCurrentVideoTime();
 
-      if (controller?.getPlayingState() === 'playing') {
-          window.requestAnimationFrame(task)
+      if (controller?.getPlayingState() === "playing") {
+        window.requestAnimationFrame(task);
       }
-  }
+    };
 
     window.requestAnimationFrame(task);
-  }, [controller])
+  }, [controller, updateCurrentVideoTime, updateProgressBar]);
+
+  useEffect(() => {
+    if (playingState === "playing") {
+      progressUpdateTask();
+    }
+  }, [playingState, progressUpdateTask]);
+
+  const handlePlay = useCallback(() => {
+    controller?.play();
+    progressUpdateTask();
+  }, [controller, progressUpdateTask]);
 
   const handlePause = useCallback(() => {
     controller?.pause();
-  }, [controller])
+  }, [controller]);
 
   const handlePlayAgain = useCallback(() => {
     controller?.reset();
     controller?.play();
-
-
-    const task = () => {
-      if (progressRef.current?.textContent) {
-        (progressRef.current.textContent as any) = controller?.getPlayingProgress();
-      }
-
-      if (controller?.getPlayingState() === 'playing') {
-          window.requestAnimationFrame(task)
-      }
-  }
-
-    window.requestAnimationFrame(task);
-  }, [controller])
-
-  const playingState = controller?.getPlayingState() || 'paused';
+  }, [controller]);
 
   return (
-    <>
+    <StyledContainer>
       <StyledPlayer
         ref={setElement}
-        src="https://www.shutterstock.com/shutterstock/videos/1069358941/preview/stock-footage-water-drops-flying-in-super-slow-motion-k.mp4"
+        src="https://res.cloudinary.com/dl2xrqyxj/video/upload/v1698955137/l16kb1blwckvbchvkiff.mp4"
       />
-     {playingState === 'paused' && <button onClick={handlePlay}>play</button>}
-     {playingState === 'playing' && <button onClick={handlePause}>pause</button>}
-     {playingState === 'ended' && <button onClick={handlePlayAgain}>play again</button>}
-     <div ref={progressRef}>0</div>
-     <div ref={timerRef}>0</div>
-    </>
+      <StyledControls>
+        <div>
+          {playingState === "paused" && (
+            <PlayPauseButton onClick={handlePlay}>play</PlayPauseButton>
+          )}
+          {playingState === "playing" && (
+            <PlayPauseButton onClick={handlePause}>pause</PlayPauseButton>
+          )}
+          {playingState === "ended" && (
+            <PlayPauseButton onClick={handlePlayAgain}>replay</PlayPauseButton>
+          )}
+        </div>
+        <ProgressAndTimerContainer>
+          <ProgressWrapper>
+            <Progress ref={progressRef} />
+          </ProgressWrapper>
+          <Time ref={timerRef}>0</Time>
+        </ProgressAndTimerContainer>
+      </StyledControls>
+    </StyledContainer>
   );
 };
