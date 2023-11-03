@@ -44,7 +44,7 @@ export class VideoController {
 
   replay() {
     this.reset();
-    this.replay();
+    this.play();
   }
 
   mute() {
