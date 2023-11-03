@@ -1,22 +1,25 @@
 export class VideoController {
   private element: HTMLVideoElement;
 
-  private isPausingBlocked = false;
+  private isPausingBlocked: boolean;
 
-  private cachedVolume = 0.5;
+  private subscribers: (() => Promise<void>)[];
 
-  private runRender: () => void;
+  private cachedVolume: number;
 
-  constructor(el: HTMLVideoElement, forceUpdate: () => void) {
+  constructor(el: HTMLVideoElement) {
     this.element = el;
-    this.runRender = forceUpdate;
+    this.isPausingBlocked = false;
+    this.subscribers = [];
+    this.cachedVolume = 0.5;
 
-    el.addEventListener('play', this.runRender)
-    el.addEventListener('pause', this.runRender);
-    el.addEventListener('ended', this.runRender);
-    el.addEventListener('playing', this.runRender);
-    el.addEventListener('waiting', this.runRender);
-    el.addEventListener('durationchange', this.runRender);
+    el.addEventListener("play", this.emitListeners.bind(this));
+    el.addEventListener("pause", this.emitListeners.bind(this));
+    el.addEventListener("ended", this.emitListeners.bind(this));
+    el.addEventListener("playing", this.emitListeners.bind(this));
+    el.addEventListener("waiting", this.emitListeners.bind(this));
+    el.addEventListener("durationchange", this.emitListeners.bind(this));
+
     // don't forget implement unsubscribe;
   }
 
@@ -39,6 +42,11 @@ export class VideoController {
     }
   }
 
+  replay() {
+    this.reset();
+    this.replay();
+  }
+
   mute() {
     this.cachedVolume = this.element.volume;
 
@@ -47,10 +55,6 @@ export class VideoController {
 
   unmute() {
     this.element.volume = this.cachedVolume;
-  }
-
-  reset() {
-    this.element.currentTime = 0;
   }
 
   updateVolume(percent: number) {
@@ -74,19 +78,35 @@ export class VideoController {
   }
 
   getPlayingState() {
-    if(!this.element.paused) {
-      return 'playing'
+    if (!this.element.paused) {
+      return "playing";
     }
 
     if (this.element.ended) {
-      return 'ended';
+      return "ended";
     }
 
-    return 'paused';
+    return "paused";
   }
 
   getDuration() {
-     return this.element.duration;
+    return this.element.duration;
   }
 
+  subscribe(callb: () => Promise<void>) {
+    // add checking that subscriber doesn't exist
+    this.subscribers.push(callb);
+  }
+
+  private reset() {
+    this.element.currentTime = 0;
+  }
+
+  private emitListeners() {
+    try {
+      this.subscribers.map((s) => s());
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }
