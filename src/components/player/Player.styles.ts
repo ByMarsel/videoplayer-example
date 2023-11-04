@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
-export const StyledPlayer = styled.video``;
+export const StyledPlayer = styled.video`
+  width: 100%;
+
+`;
 
 export const StyledContainer = styled.div`
   position: relative;
