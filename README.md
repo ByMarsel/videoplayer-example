@@ -3,7 +3,7 @@ This repository serves as a comprehensive guide and example for building a custo
 
 # Features
 - Play/Pause[implemented]: Seamless start and stop functionalities with smooth transitions.
-- Volume Control[in progress]: Easily adjustable volume slider to enhance the viewing experience.
+- Volume Control[implemented]: Easily adjustable volume slider to enhance the viewing experience.
 - Seeking[implemented]: Fast-forward and rewind with a simple, user-friendly progress bar.
 - Fullscreen Mode[in progress]: Immerse in full-screen viewing with a single click.
 - Responsive Design[in progress]: Enjoy the video player on any device, be it desktop, tablet, or mobile.
