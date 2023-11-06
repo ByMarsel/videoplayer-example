@@ -20,6 +20,14 @@ export const Timer: FC<Props> = ({ controller }) => {
     }
   }, [controller]);
 
+  useEffect(() => {
+    if (controller) {
+      controller.subscribe("seeking", async () => {
+        updateCurrentVideoTime();
+      });
+    }
+  }, [controller, updateCurrentVideoTime]);
+
   const runTask = useCallback(async () => {
     const task = () => {
       updateCurrentVideoTime();
@@ -33,10 +41,10 @@ export const Timer: FC<Props> = ({ controller }) => {
   }, [controller, updateCurrentVideoTime]);
 
   useEffect(() => {
-    if(controller) {
-     controller.subscribe(runTask)
+    if (controller) {
+      controller.subscribe("playingState", runTask);
     }
-  }, [controller, runTask])
+  }, [controller, runTask]);
 
   return <Time ref={timerRef}>0:00</Time>;
 };

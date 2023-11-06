@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const StyledPlayer = styled.video`
   width: 100%;
-
+  background-color: black;
 `;
 
 export const StyledContainer = styled.div`
@@ -21,7 +21,7 @@ export const StyledControls = styled.div`
 
   display: grid;
 
-  grid-template-columns: min-content 1fr;
+  grid-template-columns: min-content 8fr 1fr;
   grid-column-gap: 10px;
 
   padding: 12px;
@@ -52,6 +52,7 @@ export const ProgressAndTimerContainer = styled.div`
   background-color: rgba(64, 64, 64, 0.7);
 
   padding: 4px 8px;
+  padding-left: 0;
 
   border-radius: 4px;
 `;

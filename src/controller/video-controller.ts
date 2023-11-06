@@ -3,22 +3,42 @@ export class VideoController {
 
   private isPausingBlocked: boolean;
 
-  private subscribers: (() => Promise<void>)[];
+  private playingStateListeners: (() => Promise<void>)[] = [];
+  private volumeChangeListeners: (() => Promise<void>)[] = [];
+  private seekingListeners: (() => Promise<void>)[] = [];
 
   private cachedVolume: number;
 
   constructor(el: HTMLVideoElement) {
     this.element = el;
     this.isPausingBlocked = false;
-    this.subscribers = [];
     this.cachedVolume = 0.5;
 
-    el.addEventListener("play", this.emitListeners.bind(this));
-    el.addEventListener("pause", this.emitListeners.bind(this));
-    el.addEventListener("ended", this.emitListeners.bind(this));
-    el.addEventListener("playing", this.emitListeners.bind(this));
-    el.addEventListener("waiting", this.emitListeners.bind(this));
-    el.addEventListener("durationchange", this.emitListeners.bind(this));
+    el.addEventListener(
+      "play",
+      this.emitPlayingStateChangeListeners.bind(this)
+    );
+    el.addEventListener(
+      "pause",
+      this.emitPlayingStateChangeListeners.bind(this)
+    );
+    el.addEventListener(
+      "ended",
+      this.emitPlayingStateChangeListeners.bind(this)
+    );
+    el.addEventListener(
+      "playing",
+      this.emitPlayingStateChangeListeners.bind(this)
+    );
+    el.addEventListener(
+      "waiting",
+      this.emitPlayingStateChangeListeners.bind(this)
+    );
+    el.addEventListener(
+      "volumechange",
+      this.emitVolumeChangeListeners.bind(this)
+    );
+    el.addEventListener('seeking', this.emitSeekingListeners.bind(this))
 
     // don't forget implement unsubscribe;
   }
@@ -93,18 +113,52 @@ export class VideoController {
     return this.element.duration;
   }
 
-  subscribe(callb: () => Promise<void>) {
+  getVolume() {
+    return this.element.volume * 100;
+  }
+
+  subscribe(
+    event: "playingState" | "durationChange" | "volumeChange" | "seeking",
+    callb: () => Promise<void>
+  ) {
     // add checking that subscriber doesn't exist
-    this.subscribers.push(callb);
+
+    if (event === "playingState") {
+      this.playingStateListeners.push(callb);
+    }
+
+    if (event === 'volumeChange') {
+      this.volumeChangeListeners.push(callb);
+    }
+
+    if (event === 'seeking') {
+      this.seekingListeners.push(callb);
+    }
   }
 
   private reset() {
     this.element.currentTime = 0;
   }
 
-  private emitListeners() {
+  private emitPlayingStateChangeListeners() {
     try {
-      this.subscribers.map((s) => s());
+      this.playingStateListeners.map((s) => s());
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  private emitVolumeChangeListeners() {
+    try {
+      this.volumeChangeListeners.map((s) => s());
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  private emitSeekingListeners() {
+    try {
+      this.seekingListeners.map((s) => s());
     } catch (e) {
       console.error(e);
     }

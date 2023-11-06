@@ -9,6 +9,7 @@ import {
 import { VideoController } from "../../controller/video-controller";
 import { Progress } from "../progress/Progress";
 import { Timer } from "../timer/Timer";
+import { Volume } from "../volume/Volume";
 
 export const Player = () => {
   const [element, setElement] = useState<HTMLVideoElement | null>(null);
@@ -27,9 +28,12 @@ export const Player = () => {
 
   useEffect(() => {
     if (controller) {
-      controller.subscribe(async () => {
+      controller.subscribe("playingState", async () => {
         setPlayingState(controller.getPlayingState());
       });
+      controller.subscribe("seeking", async () =>
+        setPlayingState(controller.getPlayingState())
+      );
     }
   }, [controller]);
 
@@ -48,6 +52,7 @@ export const Player = () => {
   return (
     <StyledContainer>
       <StyledPlayer
+        playsInline
         ref={setElement}
         src="https://res.cloudinary.com/dl2xrqyxj/video/upload/v1698955137/l16kb1blwckvbchvkiff.mp4"
       />
@@ -67,6 +72,7 @@ export const Player = () => {
           <Progress controller={controller} />
           <Timer controller={controller} />
         </ProgressAndTimerContainer>
+        <Volume controller={controller} />
       </StyledControls>
     </StyledContainer>
   );

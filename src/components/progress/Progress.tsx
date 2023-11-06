@@ -1,10 +1,11 @@
 import { FC, useCallback, useEffect, useRef } from "react";
-import {
-  ProgressWrapper,
-  ProgressBar,
-  ProgressPlaceholder,
-} from "./Progress.styles";
 import { VideoController } from "../../controller/video-controller";
+import {
+  StripValue,
+  StripValuePlaceholder,
+  StripValueWrapper,
+} from "../../styles/common.styles";
+import { STRIPE_CONTAINER_PADDINGS } from "../../styles/constants";
 
 interface Props {
   controller: VideoController | null;
@@ -41,24 +42,30 @@ export const Progress: FC<Props> = ({ controller }) => {
 
   useEffect(() => {
     if (controller) {
-      controller.subscribe(runTask);
+      controller.subscribe("playingState", runTask);
     }
   }, [controller, runTask]);
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-
-      //refactor me
-      const localX = event.clientX - event.currentTarget.offsetLeft - 8;
+      const localX =
+        event.clientX -
+        event.currentTarget.offsetLeft -
+        STRIPE_CONTAINER_PADDINGS;
 
       if (controller) {
         const duraiton = controller.getDuration() / 100;
-        const width = 100 / (event.currentTarget.clientWidth);
+        const width = 100 / (event.currentTarget.clientWidth - STRIPE_CONTAINER_PADDINGS);
 
-        controller.seek(Math.min(Math.round(width * localX * duraiton), controller.getDuration()));
-        
+        const seekingValue = Math.min(
+          width * localX * duraiton,
+          controller.getDuration()
+        );
+
+        controller.seek(seekingValue);
+
         window.cancelAnimationFrame(progressTaskRef.current);
-        progressTaskRef.current= -1;
+        progressTaskRef.current = -1;
         updateProgressBar();
       }
     },
@@ -66,9 +73,9 @@ export const Progress: FC<Props> = ({ controller }) => {
   );
 
   return (
-    <ProgressWrapper onClick={handleClick}>
-      <ProgressBar ref={progressRef} />
-      <ProgressPlaceholder />
-    </ProgressWrapper>
+    <StripValueWrapper onClick={handleClick}>
+      <StripValue ref={progressRef} />
+      <StripValuePlaceholder />
+    </StripValueWrapper>
   );
 };
