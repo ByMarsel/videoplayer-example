@@ -2,10 +2,10 @@
 This repository serves as a comprehensive guide and example for building a custom video player. Here, we demonstrate how to create an intuitive, feature-rich video player using modern web technologies. The implementation showcases key functionalities such as play/pause, volume control, seeking, fullscreen toggle, and responsive design for various devices.
 
 # Features
-- Play/Pause[implemented]: Seamless start and stop functionalities with smooth transitions.
-- Volume Control[implemented]: Easily adjustable volume slider to enhance the viewing experience.
-- Seeking[implemented]: Fast-forward and rewind with a simple, user-friendly progress bar.
-- Fullscreen Mode[in progress]: Immerse in full-screen viewing with a single click.
+- Play/Pause **[implemented]**: Seamless start and stop functionalities with smooth transitions.
+- Volume Control **[implemented]**: Easily adjustable volume slider to enhance the viewing experience.
+- Seeking **[implemented]**: Fast-forward and rewind with a simple, user-friendly progress bar.
+- Fullscreen Mode **[implemented except mobile iOS]**: Immerse in full-screen viewing with a single click.
 - Responsive Design[in progress]: Enjoy the video player on any device, be it desktop, tablet, or mobile.
 
 # Technologies
