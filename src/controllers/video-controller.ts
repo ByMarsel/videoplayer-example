@@ -1,5 +1,5 @@
-export class VideoController {
-  private element: HTMLVideoElement;
+export class VideoController{
+  private readonly element: HTMLVideoElement;
 
   private isPausingBlocked: boolean;
 
@@ -38,7 +38,7 @@ export class VideoController {
       "volumechange",
       this.emitVolumeChangeListeners.bind(this)
     );
-    el.addEventListener('seeking', this.emitSeekingListeners.bind(this))
+    el.addEventListener("seeking", this.emitSeekingListeners.bind(this));
 
     // don't forget implement unsubscribe;
   }
@@ -91,8 +91,6 @@ export class VideoController {
     this.element.currentTime = seconds;
   }
 
-  requestFullsreen() {}
-
   getPlayingProgress() {
     return this.element.currentTime;
   }
@@ -127,11 +125,11 @@ export class VideoController {
       this.playingStateListeners.push(callb);
     }
 
-    if (event === 'volumeChange') {
+    if (event === "volumeChange") {
       this.volumeChangeListeners.push(callb);
     }
 
-    if (event === 'seeking') {
+    if (event === "seeking") {
       this.seekingListeners.push(callb);
     }
   }

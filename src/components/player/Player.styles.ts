@@ -21,7 +21,7 @@ export const StyledControls = styled.div`
 
   display: grid;
 
-  grid-template-columns: min-content 8fr 1fr;
+  grid-template-columns: min-content 8fr 1fr 40px;
   grid-column-gap: 10px;
 
   padding: 12px;
@@ -56,3 +56,8 @@ export const ProgressAndTimerContainer = styled.div`
 
   border-radius: 4px;
 `;
+
+export const FullscreenButton = styled(PlayPauseButton)`
+  padding: 0;
+  min-width: initial;
+`

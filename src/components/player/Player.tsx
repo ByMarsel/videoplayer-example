@@ -1,15 +1,23 @@
-import { useCallback, useEffect, useState } from "react";
 import {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  FullscreenButton,
   PlayPauseButton,
   ProgressAndTimerContainer,
   StyledContainer,
   StyledControls,
   StyledPlayer,
 } from "./Player.styles";
-import { VideoController } from "../../controller/video-controller";
+import { VideoController } from "../../controllers/video-controller";
 import { Progress } from "../progress/Progress";
 import { Timer } from "../timer/Timer";
 import { Volume } from "../volume/Volume";
+import screenfull from "screenfull";
 
 export const Player = () => {
   const [element, setElement] = useState<HTMLVideoElement | null>(null);
@@ -17,6 +25,15 @@ export const Player = () => {
   const [playingState, setPlayingState] = useState<
     "playing" | "paused" | "ended"
   >("paused");
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (screenfull.isEnabled) {
+      screenfull.on("change", () => {
+        setIsFullscreen(screenfull.isFullscreen);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     if (element) {
@@ -49,14 +66,39 @@ export const Player = () => {
     controller?.replay();
   }, [controller]);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleToggleFullscreen: MouseEventHandler<HTMLButtonElement> =
+    useCallback(() => {
+      if (containerRef.current) {
+        screenfull.toggle(containerRef.current);
+      }
+    }, []);
+
+  const handleContainerClick = useCallback(() => {
+    if (playingState === "paused") {
+      controller?.play();
+    }
+    if (playingState === "playing") {
+      controller?.pause();
+    }
+  }, [controller, playingState]);
+
+  const handleControllsClick: MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      event.stopPropagation();
+    },
+    []
+  );
+
   return (
-    <StyledContainer>
+    <StyledContainer onClick={handleContainerClick} ref={containerRef}>
       <StyledPlayer
         playsInline
         ref={setElement}
         src="https://res.cloudinary.com/dl2xrqyxj/video/upload/v1698955137/l16kb1blwckvbchvkiff.mp4"
       />
-      <StyledControls>
+      <StyledControls onClick={handleControllsClick}>
         <div>
           {playingState === "paused" && (
             <PlayPauseButton onClick={handlePlay}>play</PlayPauseButton>
@@ -73,6 +115,9 @@ export const Player = () => {
           <Timer controller={controller} />
         </ProgressAndTimerContainer>
         <Volume controller={controller} />
+        <FullscreenButton onClick={handleToggleFullscreen}>
+          {isFullscreen ? "]  [" : "[  ]"}
+        </FullscreenButton>
       </StyledControls>
     </StyledContainer>
   );

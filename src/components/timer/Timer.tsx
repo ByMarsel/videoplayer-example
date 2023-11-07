@@ -1,6 +1,6 @@
 import { FC, useCallback, useEffect, useRef } from "react";
 import { Time } from "./Timer.styles";
-import { VideoController } from "../../controller/video-controller";
+import { VideoController } from "../../controllers/video-controller";
 import { formatCurrentVideoTime } from "./utils";
 
 interface Props {

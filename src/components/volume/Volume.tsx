@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { VideoController } from "../../controller/video-controller";
+import { VideoController } from "../../controllers/video-controller";
 import { StyledStripValueWrapper, StyledStripeValue } from "./Volume.styles";
 import { StripValuePlaceholder } from "../../styles/common.styles";
 import { STRIPE_CONTAINER_PADDINGS } from "../../styles/constants";

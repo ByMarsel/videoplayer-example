@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useRef } from "react";
-import { VideoController } from "../../controller/video-controller";
+import { VideoController } from "../../controllers/video-controller";
 import {
   StripValue,
   StripValuePlaceholder,
