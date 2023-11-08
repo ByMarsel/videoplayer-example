@@ -70,10 +70,16 @@ export const Player = () => {
 
   const handleToggleFullscreen: MouseEventHandler<HTMLButtonElement> =
     useCallback(() => {
-      if (containerRef.current) {
-        screenfull.toggle(containerRef.current);
+      if (screenfull.isEnabled) {
+        if (containerRef.current) {
+          screenfull.toggle(containerRef.current);
+        }
+      } else {
+        if (element && (element as any)?.webkitSupportsPresentationMode) {
+          (element as any)?.webkitSetPresentationMode("fullscreen");
+        }
       }
-    }, []);
+    }, [element]);
 
   const handleContainerClick = useCallback(() => {
     if (playingState === "paused") {

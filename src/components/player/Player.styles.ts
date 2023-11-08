@@ -27,23 +27,34 @@ export const StyledControls = styled.div`
   padding: 12px;
 
   box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    grid-template-columns: min-content 8fr 60px 40px;
+    grid-column-gap: 4px;
+  }
 `;
 
 export const PlayPauseButton = styled.button`
   border-radius: 4px;
   border: 0;
   padding: 4px 8px;
-  padding-bottom: 6px;
 
   box-sizing: border-box;
 
   color: white;
 
-  min-width: 60px;
+  min-width: 50px;
 
   background-color: rgba(64, 64, 64, 0.7);
 
   cursor: pointer;
+
+  min-height: 28px;
+
+  @media (max-width: 640px) {
+    padding: 4px 2px;
+  }
+  
 `;
 
 export const ProgressAndTimerContainer = styled.div`
