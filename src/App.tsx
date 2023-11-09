@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 import { Player } from "./components/player/Player";
+import { Container, GitHubLink, GitHubLinkWrapper, Title } from "./App.styles";
 
 const GlobalStyle = createGlobalStyle`
   @font-face {
@@ -12,14 +13,26 @@ const GlobalStyle = createGlobalStyle`
     font-family: 'Pixelify Sans';
     font-weight: 400;
   }
+
+  body, html {
+    padding: 0;
+    margin: 0;
+  }
 `;
 
 function App() {
   return (
-    <div className="App">
+    <Container>
       <GlobalStyle />
+      <Title>Welcome to Our Video Player Example</Title>
       <Player />
-    </div>
+      <GitHubLinkWrapper>
+        See code on {" "}
+        <GitHubLink href="https://github.com/ByMarsel/videoplayer-example">
+          GitHub Repo
+        </GitHubLink>
+      </GitHubLinkWrapper>
+    </Container>
   );
 }
 

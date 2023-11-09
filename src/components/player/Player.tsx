@@ -75,7 +75,7 @@ export const Player = () => {
           screenfull.toggle(containerRef.current);
         }
       } else {
-        if (element && (element as any)?.webkitSupportsPresentationMode) {
+        if (element && (element as any)?.webkitSupportsPresentationMode('fullscreen')) {
           (element as any)?.webkitSetPresentationMode("fullscreen");
         }
       }
