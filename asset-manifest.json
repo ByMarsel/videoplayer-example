@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/videoplayer-example/static/js/main.8380313e.js",
+    "main.js": "/videoplayer-example/static/js/main.e4268a10.js",
     "index.html": "/videoplayer-example/index.html",
-    "main.8380313e.js.map": "/videoplayer-example/static/js/main.8380313e.js.map"
+    "main.e4268a10.js.map": "/videoplayer-example/static/js/main.e4268a10.js.map"
   },
   "entrypoints": [
-    "static/js/main.8380313e.js"
+    "static/js/main.e4268a10.js"
   ]
 }
