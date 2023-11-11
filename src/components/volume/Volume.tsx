@@ -14,13 +14,19 @@ export const Volume: FC<Props> = ({ controller }) => {
     useState<RectangleController | null>();
 
   const volumeRef = useRef<HTMLDivElement>(null);
-  const placeHolderRef = useRef<HTMLDivElement>(null)
+  const placeHolderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (placeHolderRef.current) {
       setRectController(new RectangleController(placeHolderRef.current));
     }
   }, []);
+
+  useEffect(() => {
+    if (volumeRef.current && controller) {
+      volumeRef.current.style.width = `${controller.getVolume() * 100}%`;
+    }
+  }, [controller]);
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
@@ -31,7 +37,7 @@ export const Volume: FC<Props> = ({ controller }) => {
           volumeRef.current.style.width = `${Math.max(volume, 0)}%`;
         }
 
-        controller.updateVolume(Math.max(volume / 100, 0));
+        controller.updateVolume(volume);
       }
     },
     [controller, rectController]
