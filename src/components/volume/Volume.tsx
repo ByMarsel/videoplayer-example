@@ -1,40 +1,46 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { VideoController } from "../../controllers/video-controller";
 import { StyledStripValueWrapper, StyledStripeValue } from "./Volume.styles";
 import { StripValuePlaceholder } from "../../styles/common.styles";
-import { STRIPE_CONTAINER_PADDINGS } from "../../styles/constants";
+import { RectangleController } from "../../controllers/rectangle-controller";
+import { calculateCursorPositionInPercents } from "../progress/utils";
 
 interface Props {
-    controller: VideoController | null;
+  controller: VideoController | null;
 }
 
-export const Volume: FC<Props> = ({controller}) => {
-  const [volume, setVolume] = useState(0)
+export const Volume: FC<Props> = ({ controller }) => {
+  const [rectController, setRectController] =
+    useState<RectangleController | null>();
+
+  const volumeRef = useRef<HTMLDivElement>(null);
+  const placeHolderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (controller) {
-        setVolume(controller.getVolume())
+    if (placeHolderRef.current) {
+      setRectController(new RectangleController(placeHolderRef.current));
     }
-  }, [controller])
+  }, []);
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      const localX = event.clientX - event.currentTarget.offsetLeft - STRIPE_CONTAINER_PADDINGS;
+      if (rectController && controller) {
+        const volume = calculateCursorPositionInPercents(rectController, event);
 
-      if (controller) {
-        const volumePercent = 100 / (event.currentTarget.clientWidth - STRIPE_CONTAINER_PADDINGS) * localX;
+        if (volumeRef.current) {
+          volumeRef.current.style.width = `${Math.max(volume, 0)}%`;
+        }
 
-        controller.updateVolume(volumePercent);
-        setVolume(Math.min(volumePercent, 100))
+        controller.updateVolume(Math.max(volume / 100, 0));
       }
     },
-    [controller]
+    [controller, rectController]
   );
 
   return (
     <StyledStripValueWrapper onClick={handleClick}>
-      <StyledStripeValue width={volume}  />
-      <StripValuePlaceholder />
+      <StyledStripeValue ref={volumeRef} />
+      <StripValuePlaceholder ref={placeHolderRef} />
     </StyledStripValueWrapper>
   );
 };

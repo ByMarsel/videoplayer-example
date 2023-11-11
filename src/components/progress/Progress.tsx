@@ -1,11 +1,16 @@
-import { FC, useCallback, useEffect, useRef } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { VideoController } from "../../controllers/video-controller";
 import {
   StripValue,
   StripValuePlaceholder,
   StripValueWrapper,
 } from "../../styles/common.styles";
-import { STRIPE_CONTAINER_PADDINGS } from "../../styles/constants";
+import { RectangleController } from "../../controllers/rectangle-controller";
+import {
+  calculateCurrentTimeByCursorPosition,
+  calculateCursorPosition,
+} from "./utils";
+import { FramePreview } from "./Progress.styles";
 
 interface Props {
   controller: VideoController | null;
@@ -13,7 +18,17 @@ interface Props {
 
 export const Progress: FC<Props> = ({ controller }) => {
   const progressRef = useRef<HTMLDivElement>(null);
-  const progressTaskRef = useRef<number>(-1);
+  const placeholderRef = useRef<HTMLDivElement>(null);
+  const framePreviewRef = useRef<HTMLVideoElement>(null);
+
+  const [rectangleController, setRectangleController] =
+    useState<RectangleController | null>(null);
+
+  useEffect(() => {
+    if (placeholderRef.current) {
+      setRectangleController(new RectangleController(placeholderRef.current));
+    }
+  }, []);
 
   const updateProgressBar = useCallback(() => {
     const progressEl = progressRef.current;
@@ -33,11 +48,11 @@ export const Progress: FC<Props> = ({ controller }) => {
       updateProgressBar();
 
       if (controller?.getPlayingState() === "playing") {
-        progressTaskRef.current = window.requestAnimationFrame(task);
+        window.requestAnimationFrame(task);
       }
     };
 
-    progressTaskRef.current = window.requestAnimationFrame(task);
+    window.requestAnimationFrame(task);
   }, [controller, updateProgressBar]);
 
   useEffect(() => {
@@ -48,34 +63,76 @@ export const Progress: FC<Props> = ({ controller }) => {
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      const localX =
-        event.clientX -
-        event.currentTarget.offsetLeft -
-        STRIPE_CONTAINER_PADDINGS;
-
-      if (controller) {
-        const duraiton = controller.getDuration() / 100;
-        const width = 100 / (event.currentTarget.clientWidth - STRIPE_CONTAINER_PADDINGS);
-
-        const seekingValue = Math.min(
-          width * localX * duraiton,
+      if (rectangleController && controller) {
+        const seekingValue = calculateCurrentTimeByCursorPosition(
+          rectangleController,
+          event,
           controller.getDuration()
         );
 
         controller.seek(seekingValue);
-
-        window.cancelAnimationFrame(progressTaskRef.current);
-        progressTaskRef.current = -1;
         updateProgressBar();
       }
     },
-    [controller, updateProgressBar]
+    [controller, rectangleController, updateProgressBar]
   );
 
+  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      const framePreviewElement = framePreviewRef.current;
+
+      if (rectangleController && framePreviewElement) {
+        const cursorPosition = calculateCursorPosition(
+          rectangleController,
+          event
+        );
+
+        const currentTime = calculateCurrentTimeByCursorPosition(
+          rectangleController,
+          event,
+          framePreviewElement.duration
+        );
+
+        const leftPadding = rectangleController.getLeftPadding();
+
+        framePreviewElement.currentTime = currentTime;
+        framePreviewElement.style.left = `${cursorPosition - 50 + leftPadding}px`;
+      }
+    },
+    [rectangleController]
+  );
+
+  const handleMouseEnter = useCallback(() => {
+    const framePreviewElement = framePreviewRef.current;
+
+    if (framePreviewElement) {
+      framePreviewRef.current.style.zIndex = "initial";
+    }
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    const framePreviewElement = framePreviewRef.current;
+
+    if (framePreviewElement) {
+      framePreviewRef.current.style.zIndex = "-1000";
+    }
+  }, []);
+
   return (
-    <StripValueWrapper onClick={handleClick}>
+    <StripValueWrapper
+      onMouseMove={handleMouseMove}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <StripValue ref={progressRef} />
-      <StripValuePlaceholder />
+      <StripValuePlaceholder ref={placeholderRef} />
+      <FramePreview
+        muted
+        preload="metadata"
+        src={controller?.getVideoSrc()}
+        ref={framePreviewRef}
+      />
     </StripValueWrapper>
   );
 };

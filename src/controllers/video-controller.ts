@@ -134,6 +134,10 @@ export class VideoController{
     }
   }
 
+  getVideoSrc() {
+    return this.element.src;
+  }
+
   private reset() {
     this.element.currentTime = 0;
   }

@@ -75,20 +75,24 @@ export const Player = () => {
           screenfull.toggle(containerRef.current);
         }
       } else {
-        if (element && (element as any)?.webkitSupportsPresentationMode('fullscreen')) {
+        if (
+          element &&
+          (element as any)?.webkitSupportsPresentationMode("fullscreen")
+        ) {
           (element as any)?.webkitSetPresentationMode("fullscreen");
         }
       }
     }, [element]);
 
   const handleContainerClick = useCallback(() => {
-    if (playingState === "paused") {
+    if (controller?.getPlayingState() === "paused") {
       controller?.play();
     }
-    if (playingState === "playing") {
+
+    if (controller?.getPlayingState() === "playing") {
       controller?.pause();
     }
-  }, [controller, playingState]);
+  }, [controller]);
 
   const handleControllsClick: MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
@@ -101,6 +105,7 @@ export const Player = () => {
     <StyledContainer onClick={handleContainerClick} ref={containerRef}>
       <StyledPlayer
         playsInline
+        preload="metadata"
         ref={setElement}
         src="https://res.cloudinary.com/dl2xrqyxj/video/upload/v1698955137/l16kb1blwckvbchvkiff.mp4"
       />

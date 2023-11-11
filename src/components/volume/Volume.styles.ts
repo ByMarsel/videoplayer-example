@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { StripValue, StripValueWrapper } from "../../styles/common.styles";
 
-export const StyledStripeValue = styled(StripValue)<{width: number}>`
-    width: ${({width}) => width}%;
+export const StyledStripeValue = styled(StripValue)`
+    width: 0%;
 
     z-index: 1;
 `

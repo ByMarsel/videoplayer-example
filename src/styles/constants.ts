@@ -1,1 +1,0 @@
-export const STRIPE_CONTAINER_PADDINGS = 16;

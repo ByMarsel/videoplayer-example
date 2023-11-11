@@ -9,6 +9,8 @@ export const StyledContainer = styled.div`
   position: relative;
 
   max-width: fit-content;
+
+  max-width: 1000px;
 `;
 
 export const StyledControls = styled.div`
