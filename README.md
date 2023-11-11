@@ -5,7 +5,8 @@ This repository serves as a comprehensive guide and example for building a custo
 - Play/Pause **[implemented]**: Seamless start and stop functionalities with smooth transitions.
 - Volume Control **[implemented]**: Easily adjustable volume slider to enhance the viewing experience.
 - Seeking **[implemented]**: Fast-forward and rewind with a simple, user-friendly progress bar.
-- Fullscreen Mode **[implemented except mobile iOS]**: Immerse in full-screen viewing with a single click.
+- Seeking. Frame Preview **[implemented]**: Seeking a video frame preview involves navigating through a video to locate a specific frame or moment.
+- Fullscreen Mode **[implemented includes mobile iOS pseudo fullscreen]**: Immerse in full-screen viewing with a single click.
 - Responsive Design[in progress]: Enjoy the video player on any device, be it desktop, tablet, or mobile.
 
 # Technologies
