@@ -6,6 +6,8 @@ import {
   useState,
 } from "react";
 import {
+  FirstPlayOverlay,
+  FirstPlayButton,
   FullscreenButton,
   PlayPauseButton,
   ProgressAndTimerContainer,
@@ -26,6 +28,7 @@ export const Player = () => {
     "playing" | "paused" | "ended"
   >("paused");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+  const [wasFirstPlayed, setWasFirstPlayed] = useState<boolean>(false);
 
   useEffect(() => {
     if (screenfull.isEnabled) {
@@ -86,6 +89,7 @@ export const Player = () => {
 
   const handleContainerClick = useCallback(() => {
     if (controller?.getPlayingState() === "paused") {
+      setWasFirstPlayed(true);
       controller?.play();
     }
 
@@ -103,6 +107,11 @@ export const Player = () => {
 
   return (
     <StyledContainer onClick={handleContainerClick} ref={containerRef}>
+      {!wasFirstPlayed && (
+        <FirstPlayOverlay>
+          <FirstPlayButton>Click to Play</FirstPlayButton>
+        </FirstPlayOverlay>
+      )}
       <StyledPlayer
         playsInline
         preload="metadata"

@@ -20,6 +20,7 @@ export const Progress: FC<Props> = ({ controller }) => {
   const progressRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const framePreviewRef = useRef<HTMLVideoElement>(null);
+  const lastTouchMovePosition = useRef<number>(0);
 
   const [rectangleController, setRectangleController] =
     useState<RectangleController | null>(null);
@@ -61,69 +62,104 @@ export const Progress: FC<Props> = ({ controller }) => {
     }
   }, [controller, runTask]);
 
+  const seek = useCallback((x: number) => {
+    if (rectangleController && controller) {
+      const seekingValue = calculateCurrentTimeByCursorPosition(
+        rectangleController,
+        x,
+        controller.getDuration()
+      );
+
+      controller.seek(seekingValue);
+      updateProgressBar();
+    }
+  }, [controller, rectangleController, updateProgressBar])
+
   const handleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      if (rectangleController && controller) {
-        const seekingValue = calculateCurrentTimeByCursorPosition(
-          rectangleController,
-          event,
-          controller.getDuration()
-        );
-
-        controller.seek(seekingValue);
-        updateProgressBar();
-      }
+      seek(event.clientX)
     },
-    [controller, rectangleController, updateProgressBar]
+    [seek]
   );
 
-  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback(
-    (event) => {
+  const renderFramePreview = useCallback(
+    (x: number) => {
       const framePreviewElement = framePreviewRef.current;
 
       if (rectangleController && framePreviewElement) {
-        const cursorPosition = calculateCursorPosition(
-          rectangleController,
-          event
-        );
+        const cursorPosition = calculateCursorPosition(rectangleController, x);
 
         const currentTime = calculateCurrentTimeByCursorPosition(
           rectangleController,
-          event,
+          x,
           framePreviewElement.duration
         );
 
         const leftPadding = rectangleController.getLeftPadding();
 
         framePreviewElement.currentTime = currentTime;
-        framePreviewElement.style.left = `${cursorPosition - 50 + leftPadding}px`;
+        framePreviewElement.style.left = `${cursorPosition - 50 + leftPadding
+          }px`;
       }
     },
     [rectangleController]
   );
 
-  const handleMouseEnter = useCallback(() => {
+  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback(
+    (event) => {
+      renderFramePreview(event.clientX);
+    },
+    [renderFramePreview]
+  );
+
+  const setFramePreviewVisible = useCallback(() => {
     const framePreviewElement = framePreviewRef.current;
 
     if (framePreviewElement) {
-      framePreviewRef.current.style.zIndex = "initial";
+      framePreviewRef.current.style.visibility = "initial";
     }
   }, []);
 
-  const handleMouseLeave = useCallback(() => {
+  const hideFramePreview = useCallback(() => {
     const framePreviewElement = framePreviewRef.current;
 
     if (framePreviewElement) {
-      framePreviewRef.current.style.zIndex = "-1000";
+      framePreviewRef.current.style.visibility = "hidden";
     }
   }, []);
+
+  const handleTouchMove: React.TouchEventHandler<HTMLDivElement> = useCallback((event) => {
+    if (event.touches.length === 1) {
+      const touch = event.touches[0];
+
+      const x = touch.clientX;
+      renderFramePreview(x)
+      lastTouchMovePosition.current = x;
+
+    }
+  }, [renderFramePreview])
+
+  const handleTouchStart: React.TouchEventHandler<HTMLDivElement> = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setFramePreviewVisible();
+  }, [setFramePreviewVisible])
+
+  const handleTouchEnd = useCallback(() => {
+    hideFramePreview()
+    seek(lastTouchMovePosition.current)
+  }, [hideFramePreview, seek])
 
   return (
     <StripValueWrapper
       onMouseMove={handleMouseMove}
       onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={setFramePreviewVisible}
+      onMouseLeave={hideFramePreview}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      onTouchMove={handleTouchMove}
     >
       <StripValue ref={progressRef} />
       <StripValuePlaceholder ref={placeholderRef} />

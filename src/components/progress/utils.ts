@@ -2,30 +2,30 @@ import { RectangleController } from "../../controllers/rectangle-controller";
 
 export const calculateCursorPosition = (
   rectangleController: RectangleController,
-  mouseEvent: React.MouseEvent<HTMLElement, MouseEvent>
+  x: number
 ) => {
   const offsetLeft = rectangleController.getLeftOffset();
-  return mouseEvent.clientX - offsetLeft;
+  return x - offsetLeft;
 };
 
 export const calculateCursorPositionInPercents = (
   rectangleController: RectangleController,
-  mouseEvent: React.MouseEvent<HTMLElement, MouseEvent>
+  x: number
 ) => {
   const onePercentWidth = 100 / rectangleController.getWidth();
 
   return (
-    onePercentWidth * calculateCursorPosition(rectangleController, mouseEvent)
+    onePercentWidth * calculateCursorPosition(rectangleController, x)
   );
 };
 
 export const calculateCurrentTimeByCursorPosition = (
   rectangleController: RectangleController,
-  mouseEvent: React.MouseEvent<HTMLElement, MouseEvent>,
+  x: number,
   duration: number
 ) => {
   const normalizedPercent =
-    calculateCursorPositionInPercents(rectangleController, mouseEvent) / 100;
+    calculateCursorPositionInPercents(rectangleController, x) / 100;
 
   return Math.min(duration * normalizedPercent, duration);
 };

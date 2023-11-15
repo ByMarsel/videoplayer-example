@@ -28,23 +28,36 @@ export const Volume: FC<Props> = ({ controller }) => {
     }
   }, [controller]);
 
+  const updateVolume = useCallback((x: number) => {
+    if (rectController && controller) {
+      const volume = calculateCursorPositionInPercents(rectController, x);
+      controller.updateVolume(volume);
+
+      if (volumeRef.current) {
+        volumeRef.current.style.width = `${Math.max(volume, 0)}%`;
+      }
+    }
+  }, [controller, rectController])
+
   const handleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      if (rectController && controller) {
-        const volume = calculateCursorPositionInPercents(rectController, event);
-
-        if (volumeRef.current) {
-          volumeRef.current.style.width = `${Math.max(volume, 0)}%`;
-        }
-
-        controller.updateVolume(volume);
-      }
+      updateVolume(event.clientX)
     },
-    [controller, rectController]
+    [updateVolume]
   );
 
+
+  const handleTouchMove = useCallback((event: React.TouchEvent) => {
+    if (event.touches.length === 1) {
+      const touch = event.touches[0];
+
+      const x = touch.clientX;
+      updateVolume(x)
+    }
+  }, [updateVolume])
+
   return (
-    <StyledStripValueWrapper onClick={handleClick}>
+    <StyledStripValueWrapper onClick={handleClick} onTouchMove={handleTouchMove}>
       <StyledStripeValue ref={volumeRef} />
       <StripValuePlaceholder ref={placeHolderRef} />
     </StyledStripValueWrapper>

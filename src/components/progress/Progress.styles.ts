@@ -35,7 +35,6 @@ export const ProgressWrapper = styled.div`
 
   align-items: center;
 
-  // it's bad practise
   flex-shrink: 1;
 
   padding-right: 8px;
@@ -72,7 +71,7 @@ export const FramePreview = styled.video`
   overflow: hidden;
   border-radius: 4px;
 
-  z-index: -1000;
+  visibility: hidden;
 
   padding: 0;
   margin: 0;
