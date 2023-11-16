@@ -1,4 +1,5 @@
 import {
+  FC,
   MouseEventHandler,
   useCallback,
   useEffect,
@@ -21,7 +22,11 @@ import { Timer } from "../timer/Timer";
 import { Volume } from "../volume/Volume";
 import screenfull from "screenfull";
 
-export const Player = () => {
+interface Props {
+  src: string;
+}
+
+export const Player: FC<Props> = ({src}) => {
   const [element, setElement] = useState<HTMLVideoElement | null>(null);
   const [controller, setController] = useState<VideoController | null>(null);
   const [playingState, setPlayingState] = useState<
@@ -116,7 +121,7 @@ export const Player = () => {
         playsInline
         preload="metadata"
         ref={setElement}
-        src="https://res.cloudinary.com/dl2xrqyxj/video/upload/v1698955137/l16kb1blwckvbchvkiff.mp4"
+        src={src}
       />
       <StyledControls onClick={handleControllsClick}>
         <div>

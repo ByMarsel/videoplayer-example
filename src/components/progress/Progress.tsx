@@ -11,6 +11,10 @@ import {
   calculateCursorPosition,
 } from "./utils";
 import { FramePreview } from "./Progress.styles";
+import { GesturesController } from "../../controllers/gesture-controller";
+
+
+const gesturesController = new GesturesController();
 
 interface Props {
   controller: VideoController | null;
@@ -20,7 +24,6 @@ export const Progress: FC<Props> = ({ controller }) => {
   const progressRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const framePreviewRef = useRef<HTMLVideoElement>(null);
-  const lastTouchMovePosition = useRef<number>(0);
 
   const [rectangleController, setRectangleController] =
     useState<RectangleController | null>(null);
@@ -71,7 +74,7 @@ export const Progress: FC<Props> = ({ controller }) => {
       );
 
       controller.seek(seekingValue);
-      updateProgressBar();
+      window.requestAnimationFrame(updateProgressBar);
     }
   }, [controller, rectangleController, updateProgressBar])
 
@@ -86,21 +89,25 @@ export const Progress: FC<Props> = ({ controller }) => {
     (x: number) => {
       const framePreviewElement = framePreviewRef.current;
 
-      if (rectangleController && framePreviewElement) {
-        const cursorPosition = calculateCursorPosition(rectangleController, x);
-
-        const currentTime = calculateCurrentTimeByCursorPosition(
-          rectangleController,
-          x,
-          framePreviewElement.duration
-        );
-
-        const leftPadding = rectangleController.getLeftPadding();
-
-        framePreviewElement.currentTime = currentTime;
-        framePreviewElement.style.left = `${cursorPosition - 50 + leftPadding
-          }px`;
+      const updatePosition = () => {
+        if (rectangleController && framePreviewElement) {
+          const cursorPosition = calculateCursorPosition(rectangleController, x);
+  
+          const currentTime = calculateCurrentTimeByCursorPosition(
+            rectangleController,
+            x,
+            framePreviewElement.duration
+          );
+  
+          const leftPadding = rectangleController.getLeftPadding();
+  
+          framePreviewElement.currentTime = currentTime;
+          framePreviewElement.style.left = `${cursorPosition - 50 + leftPadding
+            }px`;
+        }
       }
+
+      window.requestAnimationFrame(updatePosition)
     },
     [rectangleController]
   );
@@ -133,21 +140,32 @@ export const Progress: FC<Props> = ({ controller }) => {
       const touch = event.touches[0];
 
       const x = touch.clientX;
+      gesturesController.setLastFingerPosition(x);
       renderFramePreview(x)
-      lastTouchMovePosition.current = x;
-
     }
   }, [renderFramePreview])
 
   const handleTouchStart: React.TouchEventHandler<HTMLDivElement> = useCallback((event) => {
+    gesturesController.touch();
+
+    if (event.touches.length === 1) {
+      const touch = event.touches[0];
+
+      const x = touch.clientX;
+      gesturesController.setLastFingerPosition(x);
+    }
+
     event.preventDefault();
     event.stopPropagation();
     setFramePreviewVisible();
   }, [setFramePreviewVisible])
 
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = useCallback(() => {
+    console.log('touch end', gesturesController.getLastFingerPosition())
+    gesturesController.touchEnd();
+
+    seek(gesturesController.getLastFingerPosition())
     hideFramePreview()
-    seek(lastTouchMovePosition.current)
   }, [hideFramePreview, seek])
 
   return (
