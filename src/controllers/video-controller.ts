@@ -10,38 +10,46 @@ export class VideoController {
 
   private cachedVolume: number;
 
+  private boundEmitPlayingStateChangeListener: () => void;
+  private boundEmitVolumeChangeListeners: () => void;
+  private boundEmitSeekingListeners: () => void;
+
+
+
   constructor(el: HTMLVideoElement) {
     this.element = el;
     this.isPausingBlocked = false;
     this.cachedVolume = 0.5;
 
+    this.boundEmitPlayingStateChangeListener = this.emitPlayingStateChangeListeners.bind(this)
+    this.boundEmitVolumeChangeListeners = this.emitVolumeChangeListeners.bind(this)
+    this.boundEmitSeekingListeners = this.emitSeekingListeners.bind(this)
+  
     el.addEventListener(
       "play",
-      this.emitPlayingStateChangeListeners.bind(this)
+      this.boundEmitPlayingStateChangeListener
     );
     el.addEventListener(
       "pause",
-      this.emitPlayingStateChangeListeners.bind(this)
+      this.boundEmitPlayingStateChangeListener
     );
     el.addEventListener(
       "ended",
-      this.emitPlayingStateChangeListeners.bind(this)
+      this.boundEmitPlayingStateChangeListener
     );
     el.addEventListener(
       "playing",
-      this.emitPlayingStateChangeListeners.bind(this)
+      this.boundEmitPlayingStateChangeListener
     );
     el.addEventListener(
       "waiting",
-      this.emitPlayingStateChangeListeners.bind(this)
+      this.boundEmitPlayingStateChangeListener
     );
     el.addEventListener(
       "volumechange",
-      this.emitVolumeChangeListeners.bind(this)
+      this.boundEmitVolumeChangeListeners
     );
-    el.addEventListener("seeking", this.emitSeekingListeners.bind(this));
-
-    // don't forget implement unsubscribe;
+    el.addEventListener("seeking", this.boundEmitSeekingListeners);
   }
 
   play() {
@@ -170,5 +178,35 @@ export class VideoController {
     } catch (e) {
       console.error(e);
     }
+  }
+
+  dispose() {
+    const el = this.element;
+
+    el.removeEventListener(
+      "play",
+      this.boundEmitPlayingStateChangeListener
+    );
+    el.removeEventListener(
+      "pause",
+      this.boundEmitPlayingStateChangeListener
+    );
+    el.removeEventListener(
+      "ended",
+      this.boundEmitPlayingStateChangeListener
+    );
+    el.removeEventListener(
+      "playing",
+      this.boundEmitPlayingStateChangeListener
+    );
+    el.removeEventListener(
+      "waiting",
+      this.boundEmitPlayingStateChangeListener
+    );
+    el.removeEventListener(
+      "volumechange",
+      this.boundEmitVolumeChangeListeners
+    );
+    el.removeEventListener("seeking", this.boundEmitSeekingListeners);
   }
 }

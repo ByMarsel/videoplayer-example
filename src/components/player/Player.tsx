@@ -48,9 +48,14 @@ export const Player: FC<Props> = ({ src }) => {
     if (element) {
       const newVideoController = new VideoController(element);
       setController(newVideoController);
-      // add controller clearing
+
+      return () => {
+        newVideoController.dispose()
+      }
     }
-  }, [element]);
+
+    return () => {}
+  }, [element, src]);
 
   useEffect(() => {
     if (controller) {
