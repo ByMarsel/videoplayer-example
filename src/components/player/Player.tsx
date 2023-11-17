@@ -21,12 +21,13 @@ import { Progress } from "../progress/Progress";
 import { Timer } from "../timer/Timer";
 import { Volume } from "../volume/Volume";
 import screenfull from "screenfull";
+import { isIOS } from 'mobile-device-detect'
 
 interface Props {
   src: string;
 }
 
-export const Player: FC<Props> = ({src}) => {
+export const Player: FC<Props> = ({ src }) => {
   const [element, setElement] = useState<HTMLVideoElement | null>(null);
   const [controller, setController] = useState<VideoController | null>(null);
   const [playingState, setPlayingState] = useState<
@@ -123,7 +124,7 @@ export const Player: FC<Props> = ({src}) => {
         ref={setElement}
         src={src}
       />
-      <StyledControls onClick={handleControllsClick}>
+      <StyledControls isIOS={isIOS} onClick={handleControllsClick}>
         <div>
           {playingState === "paused" && (
             <PlayPauseButton onClick={handlePlay}>play</PlayPauseButton>
@@ -139,7 +140,7 @@ export const Player: FC<Props> = ({src}) => {
           <Progress controller={controller} />
           <Timer controller={controller} />
         </ProgressAndTimerContainer>
-        <Volume controller={controller} />
+        {!isIOS && <Volume controller={controller} />}
         <FullscreenButton onClick={handleToggleFullscreen}>
           {isFullscreen ? "]  [" : "[  ]"}
         </FullscreenButton>

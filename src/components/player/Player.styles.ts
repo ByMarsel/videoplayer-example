@@ -13,7 +13,7 @@ export const StyledContainer = styled.div`
   max-width: 1000px;
 `;
 
-export const StyledControls = styled.div`
+export const StyledControls = styled.div<{ isIOS?: boolean }>`
   position: absolute;
   bottom: 0;
 
@@ -23,7 +23,8 @@ export const StyledControls = styled.div`
 
   display: grid;
 
-  grid-template-columns: min-content 8fr 1fr 40px;
+  grid-template-columns: ${({ isIOS }) =>
+    isIOS ? "min-content 8fr 40px" : "min-content 8fr 1fr 40px"};
   grid-column-gap: 10px;
 
   padding: 12px;
@@ -32,7 +33,8 @@ export const StyledControls = styled.div`
   z-index: 5;
 
   @media (max-width: 640px) {
-    grid-template-columns: min-content 8fr 60px 40px;
+    grid-template-columns: ${({ isIOS }) =>
+      isIOS ? "min-content 8fr 40px" : "min-content 8fr 60px 40px"};
     grid-column-gap: 4px;
   }
 `;
