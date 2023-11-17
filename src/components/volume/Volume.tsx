@@ -4,7 +4,9 @@ import { StyledStripValueWrapper, StyledStripeValue } from "./Volume.styles";
 import { StripValuePlaceholder } from "../../styles/common.styles";
 import { RectangleController } from "../../controllers/rectangle-controller";
 import { calculateCursorPositionInPercents } from "../progress/utils";
+import { GesturesController } from "../../controllers/gesture-controller";
 
+const gesturesController = new GesturesController();
 interface Props {
   controller: VideoController | null;
 }
@@ -28,36 +30,67 @@ export const Volume: FC<Props> = ({ controller }) => {
     }
   }, [controller]);
 
-  const updateVolume = useCallback((x: number) => {
-    if (rectController && controller) {
-      const volume = calculateCursorPositionInPercents(rectController, x);
-      controller.updateVolume(volume);
+  const updateVolume = useCallback(
+    (x: number) => {
+      if (rectController && controller) {
+        const volume = calculateCursorPositionInPercents(rectController, x);
+        controller.updateVolume(volume);
 
-      if (volumeRef.current) {
-        volumeRef.current.style.width = `${Math.max(volume, 0)}%`;
+        const update = () => {
+          if (volumeRef.current) {
+            volumeRef.current.style.width = `${Math.max(volume, 0)}%`;
+          }
+        }
+        window.requestAnimationFrame(update)
       }
-    }
-  }, [controller, rectController])
+    },
+    [controller, rectController]
+  );
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      updateVolume(event.clientX)
+      if (!gesturesController.getTouchStarted()) {
+        updateVolume(event.clientX);
+      }
     },
     [updateVolume]
   );
 
+  const handleTouchMove = useCallback(
+    (event: React.TouchEvent) => {
+      if (event.touches.length === 1) {
+        const touch = event.touches[0];
 
-  const handleTouchMove = useCallback((event: React.TouchEvent) => {
+        const x = touch.clientX;
+        updateVolume(x);
+      }
+    },
+    [updateVolume]
+  );
+
+  const handleTouchStart = useCallback((event: React.TouchEvent) => {
     if (event.touches.length === 1) {
       const touch = event.touches[0];
 
       const x = touch.clientX;
-      updateVolume(x)
+      updateVolume(x);
     }
+
+    gesturesController.touch()
   }, [updateVolume])
 
+  const handleTouchEnd = useCallback(() => {
+    gesturesController.touchEnd();
+  }, [])
+
   return (
-    <StyledStripValueWrapper onClick={handleClick} onTouchMove={handleTouchMove}>
+    <StyledStripValueWrapper
+      onClick={handleClick}
+      onTouchMove={handleTouchMove}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+    >
       <StyledStripeValue ref={volumeRef} />
       <StripValuePlaceholder ref={placeHolderRef} />
     </StyledStripValueWrapper>

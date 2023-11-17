@@ -80,7 +80,9 @@ export const Progress: FC<Props> = ({ controller }) => {
 
   const handleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      seek(event.clientX)
+      if (!gesturesController.getTouchStarted()) {
+        seek(event.clientX)
+      }
     },
     [seek]
   );
@@ -92,15 +94,15 @@ export const Progress: FC<Props> = ({ controller }) => {
       const updatePosition = () => {
         if (rectangleController && framePreviewElement) {
           const cursorPosition = calculateCursorPosition(rectangleController, x);
-  
+
           const currentTime = calculateCurrentTimeByCursorPosition(
             rectangleController,
             x,
             framePreviewElement.duration
           );
-  
+
           const leftPadding = rectangleController.getLeftPadding();
-  
+
           framePreviewElement.currentTime = currentTime;
           framePreviewElement.style.left = `${cursorPosition - 50 + leftPadding
             }px`;
@@ -114,7 +116,9 @@ export const Progress: FC<Props> = ({ controller }) => {
 
   const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      renderFramePreview(event.clientX);
+      if (!gesturesController.getTouchStarted()) {
+        renderFramePreview(event.clientX);
+      }
     },
     [renderFramePreview]
   );
@@ -155,13 +159,10 @@ export const Progress: FC<Props> = ({ controller }) => {
       gesturesController.setLastFingerPosition(x);
     }
 
-    event.preventDefault();
-    event.stopPropagation();
     setFramePreviewVisible();
   }, [setFramePreviewVisible])
 
   const handleTouchEnd: React.TouchEventHandler<HTMLDivElement> = useCallback(() => {
-    console.log('touch end', gesturesController.getLastFingerPosition())
     gesturesController.touchEnd();
 
     seek(gesturesController.getLastFingerPosition())
