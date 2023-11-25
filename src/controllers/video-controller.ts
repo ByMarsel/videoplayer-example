@@ -14,41 +14,23 @@ export class VideoController {
   private boundEmitVolumeChangeListeners: () => void;
   private boundEmitSeekingListeners: () => void;
 
-
-
   constructor(el: HTMLVideoElement) {
     this.element = el;
     this.isPausingBlocked = false;
     this.cachedVolume = 0.5;
 
-    this.boundEmitPlayingStateChangeListener = this.emitPlayingStateChangeListeners.bind(this)
-    this.boundEmitVolumeChangeListeners = this.emitVolumeChangeListeners.bind(this)
-    this.boundEmitSeekingListeners = this.emitSeekingListeners.bind(this)
-  
-    el.addEventListener(
-      "play",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.addEventListener(
-      "pause",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.addEventListener(
-      "ended",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.addEventListener(
-      "playing",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.addEventListener(
-      "waiting",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.addEventListener(
-      "volumechange",
-      this.boundEmitVolumeChangeListeners
-    );
+    this.boundEmitPlayingStateChangeListener =
+    this.emitPlayingStateChangeListeners.bind(this);
+    this.boundEmitVolumeChangeListeners =
+    this.emitVolumeChangeListeners.bind(this);
+    this.boundEmitSeekingListeners = this.emitSeekingListeners.bind(this);
+
+    el.addEventListener("play", this.boundEmitPlayingStateChangeListener);
+    el.addEventListener("pause", this.boundEmitPlayingStateChangeListener);
+    el.addEventListener("ended", this.boundEmitPlayingStateChangeListener);
+    el.addEventListener("playing", this.boundEmitPlayingStateChangeListener);
+    el.addEventListener("waiting", this.boundEmitPlayingStateChangeListener);
+    el.addEventListener("volumechange", this.boundEmitVolumeChangeListeners);
     el.addEventListener("seeking", this.boundEmitSeekingListeners);
   }
 
@@ -72,7 +54,9 @@ export class VideoController {
   }
 
   replay() {
-    this.reset();
+    if (this.getPlayingState() !== "ended") {
+      this.reset();
+    }
     this.play();
   }
 
@@ -183,30 +167,12 @@ export class VideoController {
   dispose() {
     const el = this.element;
 
-    el.removeEventListener(
-      "play",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.removeEventListener(
-      "pause",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.removeEventListener(
-      "ended",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.removeEventListener(
-      "playing",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.removeEventListener(
-      "waiting",
-      this.boundEmitPlayingStateChangeListener
-    );
-    el.removeEventListener(
-      "volumechange",
-      this.boundEmitVolumeChangeListeners
-    );
+    el.removeEventListener("play", this.boundEmitPlayingStateChangeListener);
+    el.removeEventListener("pause", this.boundEmitPlayingStateChangeListener);
+    el.removeEventListener("ended", this.boundEmitPlayingStateChangeListener);
+    el.removeEventListener("playing", this.boundEmitPlayingStateChangeListener);
+    el.removeEventListener("waiting", this.boundEmitPlayingStateChangeListener);
+    el.removeEventListener("volumechange", this.boundEmitVolumeChangeListeners);
     el.removeEventListener("seeking", this.boundEmitSeekingListeners);
   }
 }

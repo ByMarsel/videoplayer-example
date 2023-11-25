@@ -48,6 +48,7 @@ export const Player: FC<Props> = ({ src }) => {
     if (element) {
       const newVideoController = new VideoController(element);
       setController(newVideoController);
+      setWasFirstPlayed(false)
 
       return () => {
         newVideoController.dispose()
