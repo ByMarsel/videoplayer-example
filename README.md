@@ -1,4 +1,4 @@
-## Welcome to Our Custom Video Player Example! [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=React%20Custom%20Video%20Player%20Example&url=https://github.com/ByMarsel/videoplayer-example)
+# Welcome to Our Custom Video Player Example! [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=React%20Custom%20Video%20Player%20Example&url=https://github.com/ByMarsel/videoplayer-example)
 
 This repository serves as a comprehensive guide and example for building a custom video player. Here, we demonstrate how to create an intuitive, feature-rich video player using modern web technologies. The implementation showcases key functionalities such as play/pause, volume control, seeking, fullscreen toggle, and responsive design for various devices.
 
