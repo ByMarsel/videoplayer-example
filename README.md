@@ -29,7 +29,7 @@ npm run start
 
 ### How to play video in fullscreen mode on iOS device?
 1. First, add the [playisinline](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/video#playsinline) attribute set to true in the video tag. This stops iOS from switching to full-screen right after user press play.
-2. See [here](https://github.com/ByMarsel/videoplayer-example/blob/b755f5cc71e1641860d3d8bf84f639bc0b96fdf4/src/components/player/Player.tsx#L95) example how to request request fullscreen in iOS 
+2. See [here](https://github.com/ByMarsel/videoplayer-example/blob/b755f5cc71e1641860d3d8bf84f639bc0b96fdf4/src/components/player/Player.tsx#L97) example how to request request fullscreen in iOS 
 3. To ensure stable functioning of the full-screen mode on iOS, it's advisable to require the user to initiate the video playback with a first click. This can be achieved by displaying the video's poster and concealing all elements except the play button.
 
 
