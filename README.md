@@ -4,6 +4,7 @@ This repository serves as a comprehensive guide and example for building a custo
 
 This example is perfect for developers looking to understand the ins and outs of video player functionality or for those seeking to implement a custom player into their own projects. Dive into our code to get started on enhancing your video content delivery! 
 
+
 ## Getting Started
 
 Install deps
@@ -25,6 +26,7 @@ npm run start
 - Fullscreen Mode **[implemented includes mobile iOS pseudo fullscreen]**: Immerse in full-screen viewing with a single click.
 - Responsive Design **[implemented]**: Enjoy the video player on any device, be it desktop, tablet, or mobile.
 
+
 ## FAQ
 
 ### How to play video in fullscreen mode on iOS device?
@@ -33,12 +35,17 @@ npm run start
 3. To ensure stable functioning of the full-screen mode on iOS, it's advisable to require the user to initiate the video playback with a first click. This can be achieved by displaying the video's poster and concealing all elements except the play button.
 
 
+## Demo
+See playground [here](https://bymarsel.github.io/videoplayer-example/)
+
+
 ## Built With
 - [ReactJS](https://react.dev/) - The library for web and native user interfaces
 - [TypeScript](https://typescriptlang.org) - TypeScript is a strongly typed programming language that builds on JavaScript
 - [Styled Components](https://styled-components.com) - CSSinJS styling library
 - [Screenfull](https://github.com/sindresorhus/screenfull) - Wrapper for cross-browser usage of the JavaScript [Fullscreen API](https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API)
 - [Create React App](https://create-react-app.dev/) - ReactJS configured project template
+
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/ByMarsel/videoplayer-example/blob/main/LICENSE) file for details
