@@ -6,7 +6,6 @@ export class VideoController {
   private playingStateListeners: (() => Promise<void>)[] = [];
   private volumeChangeListeners: (() => Promise<void>)[] = [];
   private seekingListeners: (() => Promise<void>)[] = [];
-  private isSeeking: boolean = false;
 
   private cachedVolume: number;
 
@@ -81,10 +80,7 @@ export class VideoController {
   }
 
   seek(seconds: number) {
-    if (!this.isSeeking) {
-      this.isSeeking = true;
       this.element.currentTime = seconds;
-    }
   }
 
   getPlayingProgress() {
@@ -155,8 +151,6 @@ export class VideoController {
   }
 
   private emitSeekingListeners() {
-    this.isSeeking = false;
-
     try {
       this.seekingListeners.map((s) => s());
     } catch (e) {

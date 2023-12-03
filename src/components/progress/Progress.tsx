@@ -49,9 +49,8 @@ export const Progress: FC<Props> = ({ controller }) => {
 
   const runTask = useCallback(async () => {
     const task = () => {
-      updateProgressBar();
-
       if (controller?.getPlayingState() === "playing") {
+        updateProgressBar();
         window.requestAnimationFrame(task);
       }
     };

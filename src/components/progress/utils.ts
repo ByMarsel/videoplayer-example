@@ -12,10 +12,10 @@ export const calculateCursorPositionInPercents = (
   rectangleController: RectangleController,
   x: number
 ) => {
-  const onePercentWidth = 100 / rectangleController.getWidth();
+  const widthInPercents = 100 / rectangleController.getWidth();
 
   return (
-    onePercentWidth * calculateCursorPosition(rectangleController, x)
+    widthInPercents * calculateCursorPosition(rectangleController, x)
   );
 };
 
