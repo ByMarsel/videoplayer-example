@@ -104,11 +104,11 @@ export class VideoController {
   }
 
   getVolume() {
-    return this.element.volume * 100;
+    return this.element.volume * 1000;
   }
 
   subscribe(
-    event: "playingState" | "durationChange" | "volumeChange" | "seeking",
+    event: "playingState" | "volumeChange" | "seeking",
     callb: () => Promise<void>
   ) {
     // add checking that subscriber doesn't exist

@@ -26,7 +26,7 @@ export const Volume: FC<Props> = ({ controller }) => {
 
   useEffect(() => {
     if (volumeRef.current && controller) {
-      volumeRef.current.style.width = `${controller.getVolume() * 100}%`;
+      volumeRef.current.style.width = `${controller.getVolume()}%`;
     }
   }, [controller]);
 
