@@ -23,7 +23,7 @@ export const Timer: FC<Props> = ({ controller }) => {
   useEffect(() => {
     if (controller) {
       controller.subscribe("seeking", async () => {
-        updateCurrentVideoTime();
+        window.requestAnimationFrame(updateCurrentVideoTime);
       });
     }
   }, [controller, updateCurrentVideoTime]);

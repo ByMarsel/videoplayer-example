@@ -73,7 +73,10 @@ export const Progress: FC<Props> = ({ controller }) => {
       );
 
       controller.seek(seekingValue);
-      window.requestAnimationFrame(updateProgressBar);
+
+      if (controller.getPlayingState() !== "playing") {
+        window.requestAnimationFrame(updateProgressBar);
+      }
     }
   }, [controller, rectangleController, updateProgressBar])
 
@@ -97,7 +100,7 @@ export const Progress: FC<Props> = ({ controller }) => {
           const currentTime = calculateCurrentTimeByCursorPosition(
             rectangleController,
             x,
-            framePreviewElement.duration
+            framePreviewElement.duration || 0
           );
 
           const leftPadding = rectangleController.getLeftPadding();
@@ -182,7 +185,6 @@ export const Progress: FC<Props> = ({ controller }) => {
       <StripValue ref={progressRef} />
       <StripValuePlaceholder ref={placeholderRef} />
       <FramePreview
-        muted
         preload="metadata"
         src={controller?.getVideoSrc()}
         ref={framePreviewRef}

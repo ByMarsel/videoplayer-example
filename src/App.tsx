@@ -25,7 +25,7 @@ function App() {
     <Container>
       <GlobalStyle />
       <Title>Welcome to Our Video Player Example</Title>
-      <Player src="https://res.cloudinary.com/dl2xrqyxj/video/upload/v1700163313/edkfulatqxngvh1fwt0b.mp4" />
+      <Player src="https://storage.googleapis.com/my-bucket-9999991/drift_video.mp4" />
       <GitHubLinkWrapper>
         See code on {" "}
         <GitHubLink href="https://github.com/ByMarsel/videoplayer-example">
