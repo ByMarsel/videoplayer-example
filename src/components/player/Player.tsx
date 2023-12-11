@@ -126,7 +126,6 @@ export const Player: FC<Props> = ({ src }) => {
       )}
       <StyledPlayer
         playsInline
-        muted
         preload="metadata"
         ref={setElement}
         src={src}

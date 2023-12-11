@@ -11,7 +11,8 @@ export class RectangleController {
     this.boundUpdate = this.update.bind(this);
    
     window.addEventListener("resize", this.boundUpdate);
-    window.queueMicrotask(this.boundUpdate);
+  
+    this.boundUpdate();
   }
 
   getWidth() {
